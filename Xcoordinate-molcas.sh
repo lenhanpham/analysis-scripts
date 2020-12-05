@@ -1,9 +1,9 @@
 #! /bin/bash
 #####################################################################################
 # This script is used to extract coordinates of molecules from Molcas calculation   #
-# Output files should have extensions of .out or .log    			    #
+# Output files should have extensions of .out or .log    			                #
 # Change the NR and tail -n to appropriate value for your situation                 #
-# Author: Le-Nhan Pham Univeristy of Dalat Vietnam				    #
+# Author: Le-Nhan Pham Univeristy of Dalat Vietnam	https://lenhanpham.github.io/   #
 #####################################################################################
 
 # Definition of extraction fucntion. 
