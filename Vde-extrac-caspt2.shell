@@ -3,7 +3,7 @@
 #####################################################################################
 # This script is used to extract CASPT2 energies of roots n (n=1-4) from Molcas.    #
 # Output files should have extensions of .out or .log                               #
-# Author: Le-Nhan Pham Univeristy of Dalat Vietnam				    #
+# Author: Le-Nhan Pham Univeristy of Dalat Vietnam	https://lenhanpham.github.io/   #
 #####################################################################################
 
 
