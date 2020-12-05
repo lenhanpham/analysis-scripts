@@ -1,10 +1,10 @@
 #! /bin/bash
 
 ##############################################################################################################
-# This script is used to extract energies from Molpro single point calculations rccsd(t), rks, uks, mrci     #
-# nevpt2 and optimization energy at levels of restricted DFT and unrestricted DFT (rks and uks)    	     #
-# Output files should have extensions of .out	                                                 	     #
-# Author: Le-Nhan Pham Univeristy of Dalat Vietnam				                             #
+# This script is used to extract energies from Molpro single point calculations rccsd(t), rks, uks, mrci      #
+# nevpt2 and optimization energy at levels of restricted DFT and unrestricted DFT (rks and uks)    	          #
+# Output files should have extensions of .out	                                                 	          #
+# Author: Le-Nhan Pham Univeristy of Dalat Vietnam	https://lenhanpham.github.io/			                  #
 ##############################################################################################################
 
 
