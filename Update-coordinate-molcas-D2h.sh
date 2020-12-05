@@ -1,8 +1,8 @@
 
 ##############################################################################################################
-# This script is used to update coordinates of Molcas inputs											     #
-#     	     	 																						     #
-# 																											 #
+# This script is used to update coordinates of Molcas inputs					             #
+#     	     	 											     #
+# 													     #
 # Author: Le Nhan Pham Deakin Uni https://lenhanpham.github.io/                                              #
 ##############################################################################################################
 
