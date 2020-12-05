@@ -1,7 +1,7 @@
 #####################################################################################
 # This script is used to extract coordinates of undone jobs from Quantum Espresso   #
-# Output files should have extensions of .out                       			    #
-# Author: Le Nhan Pham Deakin Uni https://lenhanpham.github.io/      				#
+# Output files should have extensions of .out                       		    #
+# Author: Le Nhan Pham Deakin Uni https://lenhanpham.github.io/      		    #
 #####################################################################################
 
 
