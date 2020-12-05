@@ -3,7 +3,7 @@
 #####################################################################################
 # This script is used to extract Vibrational frequency from Molcas optimization     #
 # Output files should have extensions of .out or .log                               #
-# Author: Le-Nhan Pham Univeristy of Dalat Vietnam				    #
+# Author: Le-Nhan Pham Univeristy of Dalat Vietnam	https://lenhanpham.github.io/   #
 #####################################################################################
 
 
