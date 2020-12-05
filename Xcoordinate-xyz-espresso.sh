@@ -1,7 +1,7 @@
 #####################################################################################
 # This script is used to extract coordinates of systems from Quantum Espresso       #
 # Output files should have extensions of .out                       			    #
-# Author: Le Nhan Pham Deakin Uni               				    				#
+# Author: Le Nhan Pham Deakin Uni https://lenhanpham.github.io/      				#
 #####################################################################################
 
 
