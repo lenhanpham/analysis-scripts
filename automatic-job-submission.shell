@@ -1,0 +1,83 @@
+#! /bin/bash
+##############################################################################################################
+# This script is used to submit jobs automatically					             #
+# Modify this script to get adapted to your system    	     	 											     #
+# 													     #
+# Author: Le Nhan Pham Deakin Uni https://lenhanpham.github.io/                                              #
+##############################################################################################################
+
+rjob=$(mq | grep nhan | wc -l)
+
+checkfreequeue()
+{
+for checkqueue in  'g60' 'g61' 'g62' 'g64' 'g67' 'g68' 'g22' 'g11'  'g8'  'g5' 'g20' 'g21' 'g10' 'g7' 'g6' #'g11' 'g10' 'g8' 'g7' 'g5' 'g6'   
+ do
+   waiting_node=$(qsum -f | grep $checkqueue\  | awk '{print $1$4}')
+   freenode=$(qsum -f | grep $checkqueue\  | awk '{print $1}')
+	if [ $waiting_node != $freenode ]; then
+	  continue
+	else 
+	  node_free=$freenode
+	fi 
+    echo $node_free
+    #awk 'BEGIN {print "'"$node_free"'"}' 
+  done
+}
+
+curr=`pwd`
+
+for fder in {1..23}; do 	#
+ cd $curr/isomer-$fder 
+
+
+for jobname in `ls *.gau`; do
+
+ rjob=$(mq | grep nhan | grep "\<R\>" | wc -l)
+ while [ $rjob -ge 5 ]; do 
+	sleep 5 
+	rjob=$(mq | grep nhan | grep "\<R\>" | wc -l) 
+	if [ $rjob -lt 5 ] 
+		then
+		sleep 60 
+		rjob2=$(mq | grep nhan | grep "\<R\>" | wc -l) 
+		if [ $rjob -eq $rjob2 ]; then 
+			rjob=$(mq | grep nhan | grep "\<R\>" | wc -l) 
+		else
+			rjob=6 
+		fi  
+	fi 
+ done 
+
+ if [ $rjob -lt 5 ] 
+	then
+        
+	freequeue=`checkfreequeue | tail -1`
+		while [ -z "$freequeue" ]; do
+			sleep 5
+			freequeue=`checkfreequeue | tail -1`
+
+			if [ a$freequeue != a ]; then
+				sleep 40
+			freenode=$(qsum -f | grep $freequeue\  | awk '{print $1}')
+			freequeue=$freenode 
+			fi
+		done
+
+ 	subg16A03 $freequeue $jobname /temp0/nhan/$jobname $jobname 
+        
+	sleep 60
+		
+	rjob=$(mq | grep nhan | grep "\<R\>" | wc -l)
+	
+	if [ $rjob -lt 5 ]
+		then
+		rjob=6
+	fi
+ fi
+
+done
+
+done
+
+
+   
