@@ -4,7 +4,7 @@
 # This script is used to extract energies from Quantum Epsresso calculations				     			 #
 #      	     											                                                     #
 # Output files should have extensions of .out	                                                 	         #
-# Author: Le-Nhan Pham Deakin Uni			                                                                 #
+# Author: Le Nhan Pham Deakin Uni	https://lenhanpham.github.io/                                            #
 ##############################################################################################################
 
 
