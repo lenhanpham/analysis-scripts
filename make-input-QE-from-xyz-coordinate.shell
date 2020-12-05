@@ -1,3 +1,10 @@
+#####################################################################################
+# This script is used to generate inputs for Quantum Espresso from xyz coordinates  #
+# Output files should have extensions of .out                       			    #
+# Author: Le Nhan Pham Deakin Uni               				    				#
+#####################################################################################
+
+
 declare -a elementlist=( 'Mo' 'S' 'C' 'H' 'O' 'N' ) 
 
 n_type()
@@ -69,9 +76,7 @@ makeinput75()
 {
 geodir=$currdir/final-coor  
 for functional in "${functionallist[@]}"; do 
-	if [ ! -d $currdir/75/ ]; then 
-		mkdir $currdir/75/ 
-	fi 
+	mkdir $currdir/75/ 
 	funcdir=$currdir/75/ 
 	cd $geodir 
 
@@ -91,25 +96,13 @@ for functional in "${functionallist[@]}"; do
 		sed -i -e "s/kpointmesh/7/g" $funcdir/${input%.*}.in 
 		sed -i -e "s/calculationtype/scf/" $funcdir/${input%.*}.in 
 	done 
-	##### make shell scripts ##### 
-	totaltime=10 
-	funcdir=$currdir/75  
-	cd $funcdir 
-	for newinput in `ls *.in` ; do 
-		cp $currdir/shell-template.txt ${newinput%.*}.sh 
-		sed -i -e "s/inputfile/${newinput%.*}/" ${newinput%.*}.sh 
-		sed -i -e "s/hours/$totaltime/" ${newinput%.*}.sh 
-	done 
-	cp ../subjob.shell ./ 
-	cp ../Xtract-and-job-done-inside-directory.shell ./ 
-
 done 
 }
 
 
-#makeinput50 
+#makeinput50
 
-makeinput75    
+makeinput75&bash make-shell.shell&cp Xtract-and-job-done-inside-directory.shell ./75/   
 
 
 
