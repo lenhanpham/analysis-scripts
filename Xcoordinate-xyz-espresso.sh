@@ -1,3 +1,10 @@
+#####################################################################################
+# This script is used to extract coordinates of systems from Quantum Espresso       #
+# Output files should have extensions of .out                       			    #
+# Author: Le Nhan Pham Deakin Uni               				    				#
+#####################################################################################
+
+
 countlines()
 {
 nlines=$(grep 'Begin final coordinates' $file_name  | wc -l) 
