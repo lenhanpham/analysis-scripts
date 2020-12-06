@@ -1,9 +1,9 @@
 #! /bin/bash
 ##############################################################################################################
-# This script is used to extract energies from Gaussian calculations				     			         #
-#      	     											                                                     #
-# Output files should have extensions of .out	                                                 	         #
-# Author: Le-Nhan Pham Deakin Uni	https://lenhanpham.github.io/                                            #
+# This script is used to extract energies from Gaussian calculations				     	      #
+#      	     											              #
+# Output files should have extensions of .out or log                                                 	      #
+# Author: Le-Nhan Pham Deakin Uni	https://lenhanpham.github.io/                                         #
 ##############################################################################################################
 
 # function for data extraction
