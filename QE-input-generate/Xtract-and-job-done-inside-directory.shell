@@ -1,0 +1,41 @@
+job_done()
+{
+ if [ ! -d done ]; then
+	mkdir done
+ fi 
+ for output in `ls *.out`; do
+
+	n=$(tail -10 $output|grep JOB\ DONE.) 
+		if [ "k$n" != "k" ]; then 
+			mv ${output%.out}.sh ./done 
+			#mv ${output%.out}.in ./done 
+			echo $output done 
+		fi 
+ done 
+}
+
+xtract() 
+{
+rm *.sh*.* 
+rm *.err 
+(Xtract-espresso.sh > $namecurrdir.results && job_done) 
+}
+
+
+currdir=$(pwd) 
+
+namecurrdir=`basename "$PWD"` 
+xtract 
+Xcoordinate-xyz-espresso.sh 
+
+
+
+
+
+
+
+
+
+
+
+

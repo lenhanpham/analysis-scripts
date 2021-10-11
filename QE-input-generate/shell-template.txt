@@ -1,0 +1,27 @@
+#!/bin/bash
+
+#PBS -P dv1   
+#PBS -q normal 
+#PBS -l walltime=hours:00:00 
+#PBS -l software=espresso 
+#PBS -l mem=120GB 
+#PBS -l ncpus=30                 
+#PBS -l jobfs=300GB 
+#PBS -l wd
+#PBS -l storage=scratch/dv1+gdata/dv1   
+
+module load openmpi/4.0.1 
+module load qe/6.4.1
+
+
+input=inputfile  
+
+if [ ! -d $PBS_O_WORKDIR/out/$input ]; then
+	mkdir -p $PBS_O_WORKDIR/out/$input 
+fi 
+
+export ESPRESSO_TMPDIR=$PBS_O_WORKDIR/out/$input  
+export ESPRESSO_PSEUDO=/scratch/dv1/np9048/pslibrary.1.0.0/pbe/PSEUDOPOTENTIALS        
+
+mpirun -n $PBS_NCPUS pw.x < $input.in > $input.out 2>$input.err 
+

@@ -1,0 +1,39 @@
+#declare -a functionallist=( 'vdw-df2' 'vdw-df-c09' 'vdw-df2-c09' 'vdw-df-obk8' 'vdw-df-ob86' \
+#			'vdw-df2-b86r' 'vdw-df-cx' 'vdw-df-cx0' 'vdw-df2-0' 'vdw-df2-br0' \
+#			'vdw-df-c090' 'vdw-df3-opt1' 'vdw-df3-opt2' 'vdw-df-C6' ) 
+
+
+declare -a functionallist=( 'vdw-df2' ) 
+
+currdir=$(pwd) 
+
+makeshell50()
+{
+totaltime=48 
+	funcdir=$currdir  
+	cd $funcdir 
+	for newinput in `ls *.in` ; do 
+		cp $currdir/shell-template.txt ${newinput%.*}.sh 
+		sed -i -e "s/inputfile/${newinput%.*}/" ${newinput%.*}.sh 
+		sed -i -e "s/hours/$totaltime/" ${newinput%.*}.sh 
+	done 
+}
+
+
+makeshell75()
+{
+totaltime=10 
+	funcdir=$currdir/75  
+	cd $funcdir 
+	for newinput in `ls *.in` ; do 
+		cp $currdir/shell-template.txt ${newinput%.*}.sh 
+		sed -i -e "s/inputfile/${newinput%.*}/" ${newinput%.*}.sh 
+		sed -i -e "s/hours/$totaltime/" ${newinput%.*}.sh 
+	done 
+	cp ../subjob.shell ./ 
+}
+
+makeshell50
+
+#makeshell75 
+

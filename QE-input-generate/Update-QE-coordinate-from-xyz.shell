@@ -1,0 +1,91 @@
+declare -a elementlist=( 'Mo' 'S' 'C' 'H' 'O' 'N' ) 
+
+
+n_type()
+{
+	numofelement=0
+	for element in "${elementlist[@]}"; do 
+		elementexist=$(grep -o $element $input | tail -1) 
+			if [ true$elementexist != true ]; then 
+				((numofelement++)) 
+				cat $currdir/$elementexist.txt >>  $funcdir/${input%.*}.in 
+			fi
+	done 
+	echo -en '\n' >> $funcdir/${input%.*}.in 
+}
+
+
+currdir=$(pwd) 
+
+
+#########################
+###### Extract coordinates of undone jobs, and move them to the undone-coor directory 
+#### tac output and then print out all lines in from beginning of tac output to ATOMIC_POSITIONS,
+##### and then tac, and print out all lines from beginning of the new tac output to "NEW-OLD atomic charge density approx. for the potential"  
+
+xcoorundone()
+{
+tac $file_name | awk '/ATOMIC_POSITIONS/ {exit} 1' | tac | awk '/NEW-OLD atomic charge density approx. for the potential/ {exit} 1' | sed '${/^$/d}' |  sed '${/^$/d}'  
+}
+
+
+
+
+if [ ! -d "undone-coor" ]; then 
+	mkdir "undone-coor" 
+fi 
+
+##### check and xtract coordinates of undone jobs only 
+for file_name in `ls *.out`; do 
+	n=$(tail -10 $file_name | grep JOB\ DONE.) 
+	if [ "k$n" == "k" ]; then 
+		xcoorundone > ${file_name%.*}.xyz 
+		mv ${file_name%.*}.xyz undone-coor 
+	fi 
+done 
+
+#################  Update coordinates ############## 
+
+#declare -a functionallist=( 'vdw-df2' 'vdw-df-c09' 'vdw-df2-c09' 'vdw-df-obk8' 'vdw-df-ob86' \
+#			'vdw-df2-b86r' 'vdw-df-cx' 'vdw-df-cx0' 'vdw-df2-0' 'vdw-df2-br0' \
+#			'vdw-df-c090' 'vdw-df3-opt1' 'vdw-df3-opt2' 'vdw-df-C6' ) 
+
+
+declare -a functionallist=( 'vdw-df2' ) 
+
+
+updateinput()
+{
+geodir=$currdir/undone-coor 
+for functional in "${functionallist[@]}"; do 
+	funcdir=$currdir   
+	cd $geodir 
+	for input in `ls *.xyz`; do 
+		cat $currdir/firstpart.txt > $funcdir/${input%.*}.in 
+		sed -i -e "s/prefixnameofinput/${input%.*}/" $funcdir/${input%.*}.in 
+		natom=$(cat $input | wc -l) 
+		sed -i -e "s/numberofatoms/${natom}/" $funcdir/${input%.*}.in 
+		n_type    
+		sed -i -e "s/numberoftypes/${numofelement}/" $funcdir/${input%.*}.in 
+		sed -i -e "s/usedfunc/${functional}/" $funcdir/${input%.*}.in 
+		cat $currdir/coordinate.txt >> $funcdir/${input%.*}.in 
+		cat $input >> $funcdir/${input%.*}.in 
+		echo -en '\n' >> $funcdir/${input%.*}.in 
+		sed -i -e "s/densitycutoff/300/" $funcdir/${input%.*}.in 
+		sed -i -e "s/kineticcutoff/50/" $funcdir/${input%.*}.in 
+		sed -i -e "s/kpointmesh/5/g" $funcdir/${input%.*}.in 
+		sed -i -e "s/calculationtype/relax/" $funcdir/${input%.*}.in 
+	done 
+done 
+}
+
+	
+
+
+updateinput  
+
+
+
+
+
+
