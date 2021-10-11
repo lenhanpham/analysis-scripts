@@ -1,0 +1,21 @@
+#!/bin/bash --login
+#SBATCH--partition=workq 
+#SBATCH --nodes=1     
+#SBATCH --tasks-per-node=24   
+#SBATCH --ntasks=24    
+#SBATCH --cpus-per-task=1  
+#SBATCH --time=24:00:00 
+#SBATCH --account=dv1 
+
+
+module load intel 
+orcapath=/group/dv1/lenhan/Softwares/orca-5.0.1 
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/group/dv1/lenhan/Softwares/orca-5.0.1:/group/dv1/lenhan/Softwares/QE/openmpi-zues/openmpi-zues/lib 
+export PATH=$PATH:/group/dv1/lenhan/Softwares/QE/openmpi-zues/openmpi-zues/bin 
+
+input=ilovethisjob       
+  
+
+$orcapath/orca $input.inp > $input.out 
+
+

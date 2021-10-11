@@ -1,0 +1,9 @@
+! UKS TPSS OPT D3BJ def2-TZVP def2-TZVP/C FREQ     
+# Number of CPU processors
+% pal nprocs 1 end
+# Memory per core (MB)
+% maxcore 4000  
+%scf
+MaxIter 1500 
+end 
+* xyz 3 4

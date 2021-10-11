@@ -1,0 +1,5 @@
+for i in `ls *.inp`; do
+ cat shell-template.txt > ${i%.*}.sh
+ sed -i -e "s/ilovethisjob/${i%.*}/" ${i%.*}.sh 
+done 
+

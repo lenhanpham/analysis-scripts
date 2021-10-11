@@ -1,0 +1,66 @@
+
+currdir=$(pwd) 
+ 
+namecurrdir=`basename "$PWD"`  
+job_done() 
+{
+ if [ ! -d ${namecurrdir}-done ]; then
+	mkdir ${namecurrdir}-done 
+ fi 
+ for output in `ls *.inp`; do
+
+	n=$(tail -10 ${output%.inp}.out |grep ORCA\ TERMINATED\ NORMALLY) 
+    m=$(grep optimization\ did\ not\ converge ${output%.inp}.out)  
+		if [ "k$n" != "k" ]; then 
+			if [ "k$m" == "k" ]; then
+			    mv ${output%.inp}.sh ${namecurrdir}-done  
+			    mv ${output} ${namecurrdir}-done 
+                mv ${output%.inp}.gbw ${namecurrdir}-done  
+                mv ${output%.inp}.xyz ${namecurrdir}-done  
+                mv ${output%.inp}.out ${namecurrdir}-done 
+			    echo $output done 
+            fi  
+		fi  
+ done 
+}
+
+
+job_notdone()
+{
+ if [ ! -d ${namecurrdir}-notdone ]; then
+	mkdir ${namecurrdir}-notdone 
+ fi 
+ for output in `ls *.inp`; do
+
+	n=$(tail -10 ${output%.inp}.out |grep ORCA\ TERMINATED\ NORMALLY) 
+    m=$(grep optimization\ did\ not\ converge ${output%.inp}.out) 
+	    if [ "k$n" == "k" ] || [ "k$m" != "k" ]; then   
+          currentime=`date +"%d-%m-%y-%T" |  tr -dc '[:alnum:]\n\r' | tr '[:upper:]' '[:lower:]'`
+          cp ${output%.inp}.out  ${namecurrdir}-notdone/${output%.inp}-$currentime.out   
+          cp ${output%.inp}_trj.xyz  ${namecurrdir}-notdone/${output%.inp}_trj-$currentime.xyz 
+          cp ${output%.inp}.gbw  ${namecurrdir}-notdone/${output%.inp}-$currentime.gbw  
+		fi 
+ done 
+}
+
+
+updatecoor()
+{
+cd $currdir 
+for input in `ls *.inp`; do
+	cat $currdir/head.txt  > $currdir/${input%.*}.inp
+	cat ${input%.*}.xyz | tail -n +3 >> $currdir/${input%.*}.inp 
+    cat $currdir/tail.txt >> $currdir/${input%.*}.inp 
+done 
+cd $currdir 
+}
+
+###### Do the jobs now #####
+
+job_done
+job_notdone 
+updatecoor  
+
+
+
+

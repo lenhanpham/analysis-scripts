@@ -1,0 +1,42 @@
+module swap PrgEnv-cray PrgEnv-intel 
+module load intel 
+export PATH=/home/lenhan/apps/openbabel-3.1.1-intel/bin:$PATH 
+
+currdir=$(pwd)
+
+if [ ! -d "$currdir/initial-coor" ]; 
+	then 
+		echo "There is no initial coordinate directory!, please make it!"
+		exit 999 
+fi 
+		
+
+mol2xyz()
+{
+cd $currdir/initial-coor 
+for input in `ls *.mol`; do
+	obabel $input -O ${input%.*}.xyz  
+done 
+cd $currdir 
+}
+
+
+makeinput()
+{
+cd $currdir/initial-coor
+for input in `ls *.xyz`; do
+	cat $currdir/head.txt  > $currdir/${input%.*}.inp
+	cat $input | tail -n +3 >> $currdir/${input%.*}.inp
+    cat $currdir/tail.txt >> $currdir/${input%.*}.inp 
+done 
+cd $currdir 
+}
+
+###### Do the jobs now #####
+mol2xyz
+
+makeinput 
+
+
+
+

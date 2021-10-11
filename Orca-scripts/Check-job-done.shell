@@ -1,0 +1,49 @@
+
+namecurrdir=`basename "$PWD"` 
+
+job_done() 
+{
+ if [ ! -d ${namecurrdir}-done ]; then
+	mkdir ${namecurrdir}-done 
+ fi 
+ for output in `ls *.inp`; do
+
+	n=$(tail -10 ${output%.inp}.out |grep ORCA\ TERMINATED\ NORMALLY) 
+    m=$(grep optimization\ did\ not\ converge ${output%.inp}.out)  
+		if [ "k$n" != "k" ]; then 
+			if [ "k$m" == "k" ]; then
+			    mv ${output%.inp}.sh ${namecurrdir}-done  
+			    mv ${output} ${namecurrdir}-done 
+                mv ${output%.inp}.gbw ${namecurrdir}-done  
+                mv ${output%.inp}.xyz ${namecurrdir}-done  
+                mv ${output%.inp}.out ${namecurrdir}-done 
+			    echo $output done 
+            fi  
+		fi  
+ done 
+}
+
+xtract() 
+{
+rm *.sh*.* 
+rm *.err 
+(Xtract-Orca-energy.sh && job_done) 
+}
+
+
+currdir=$(pwd) 
+
+xtract 
+
+
+
+
+
+
+
+
+
+
+
+
+
