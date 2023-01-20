@@ -2,6 +2,11 @@ using Pipe
 using Printf
 #using Commands
 
+
+# To use this script, a list of xyz files without extension (xyz) must be provided. Can use ls *.xyz to create this list and name it as "round-0.list".
+#Or this list can be obtained from the XTB-extract-energy.shell script. With this list, energy is ranked, and all xyz files are ranked energetically.
+
+# Set environment to let Julia know crest
 ENV["PATH"] = "$(ENV["PATH"]):/home/595/np9048/sources/xtb/xtb-6.5.0/bin"
 
 
