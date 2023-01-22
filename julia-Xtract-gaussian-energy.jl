@@ -23,7 +23,7 @@ function extract(file_name)
     try
         scf = parse(Float64, split(file_lines[findlast(x -> occursin("SCF Done", x), file_lines)])[5])
     catch
-        
+
     end
 
     # find last Zero-point correction line
@@ -31,15 +31,15 @@ function extract(file_name)
     try
         zpe = parse(Float64, split(file_lines[findlast(x -> occursin("Zero-point correction", x), file_lines)])[3])
     catch
-        
+
     end
 
     # find last Thermal correction to Gibbs Free Energy line
-    tcg = 0 
+    tcg = 0
     try
         tcg = parse(Float64, split(file_lines[findlast(x -> occursin("Thermal correction to Gibbs Free Energy", x), file_lines)])[7])
     catch
-        
+
     end
 
     # find last Sum of electronic and thermal Free Energies line
@@ -47,7 +47,7 @@ function extract(file_name)
     try
         etg = parse(Float64, split(file_lines[findlast(x -> occursin("Sum of electronic and thermal Free Energies", x), file_lines)])[8])
     catch
-        
+
     end
 
     # find last Sum of electronic and zero-point Energies line
@@ -55,7 +55,7 @@ function extract(file_name)
     try
         ezpe = parse(Float64, split(file_lines[findlast(x -> occursin("Sum of electronic and zero-point Energies", x), file_lines)])[7])
     catch
-        
+
     end
 
     # find first Frequencies line
@@ -63,7 +63,7 @@ function extract(file_name)
     try
         lf = parse(Float64, split(file_lines[findfirst(x -> occursin("Frequencies", x), file_lines)])[3])
     catch
-        
+
     end
 
     phaseCorr = "NO"
@@ -81,18 +81,21 @@ function extract(file_name)
 
     # check status of output
     n = "unknown"
+    m = "unknown"
     try
         n = split(file_lines[findlast(x -> occursin("Normal", x) || occursin("Error", x), file_lines)])[1]
+        m = split(file_lines[findlast(x -> occursin("termination", x), file_lines)])[2]
     catch
-        
+
     end
-    if n == "Normal"
+    if n == "Normal" && m == "unknown"
         status = "Done"
-    elseif (n == "Error" || scf != 0)
-        status = "Undone"
-    else
+    elseif n == "Error" && m == "termination"
         status = "Error"
+    else
+        status = "undone"
     end
+
 
     fileNameVec = [file_name, etgkj, lf, GibbsFreeHartree, etg, etgev, scf, zpe, status, phaseCorr]
     return fileNameVec
@@ -123,8 +126,8 @@ for row in extractedData
     #print out deserved information
     formatted_row = [lpad(row[1], 35), lpad(string(@sprintf("%.2f", row[2])), 15), lpad(string(@sprintf("%.2f", row[3])), 10), lpad(string(@sprintf("%.5f", row[4])), 15), lpad(string(@sprintf("%.5f", row[5])), 15), lpad(string(@sprintf("%.5f", row[6])), 15), lpad(string(@sprintf("%.2f", row[7])), 10), lpad(string(@sprintf("%.2f", row[8])), 6), lpad(row[9], 8), lpad(row[10], 6)]
     println(join(formatted_row, " "))
-    
-    
+
+
     #println("$(lpad(string(row[1]), 35)) $(lpad(row[2], 25)) $(lpad(row[3], 10)) $(lpad(string(row[4]), 22)) $(lpad(string(row[5]), 15)) $(lpad(string(row[6]), 25)) $(lpad(string(row[7]), 18)) $(lpad(string(row[8]), 10)) $(lpad(row[9], 8)) $(lpad(row[10], 6))")
 end
 
