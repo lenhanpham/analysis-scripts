@@ -8,71 +8,71 @@ using CSV
 ### Total Gibbs free energies will be sorted with the mostable structures on the top. 
 ### Todo list: write output to a file. 
 
-extractedData = Vector{Vector{Any}}() 
+extractedData = Vector{Vector{Any}}()
 
 # function for data extraction
 function extract(file_name)
-    fileNameVec = Vector{Any}() 
+    fileNameVec = Vector{Any}()
 
     scf = 000000
     try
-    scf = parse(Float64, split(readlines(file_name)[findlast(x -> occursin("SCF Done", x), readlines(file_name))])[5])
-    #println(scf)
+        scf = parse(Float64, split(readlines(file_name)[findlast(x -> occursin("SCF Done", x), readlines(file_name))])[5])
+        #println(scf)
     catch
-    
+
     end
 
-    zpe = 000000 
+    zpe = 000000
     try
-    zpe = parse(Float64, split(readlines(file_name)[findlast(x -> occursin("Zero-point correction", x), readlines(file_name))])[3])
-    #println(zpe)
+        zpe = parse(Float64, split(readlines(file_name)[findlast(x -> occursin("Zero-point correction", x), readlines(file_name))])[3])
+        #println(zpe)
     catch
 
     end
 
-    tcg = 000000 
+    tcg = 000000
     try
-    tcg = parse(Float64, split(readlines(file_name)[findlast(x -> occursin("Thermal correction to Gibbs Free Energy", x), readlines(file_name))])[7])       
-    #println(tcg)
+        tcg = parse(Float64, split(readlines(file_name)[findlast(x -> occursin("Thermal correction to Gibbs Free Energy", x), readlines(file_name))])[7])
+        #println(tcg)
     catch
-    
+
     end
 
 
-    etg = 000000 
+    etg = 000000
     try
-        etg = parse(Float64, split(readlines(file_name)[findlast(x -> occursin("Sum of electronic and thermal Free Energies", x), readlines(file_name))])[8])    
-    #println(etg)
+        etg = parse(Float64, split(readlines(file_name)[findlast(x -> occursin("Sum of electronic and thermal Free Energies", x), readlines(file_name))])[8])
+        #println(etg)
     catch
-    
+
     end
 
 
-    ezpe = 000000 
+    ezpe = 000000
     try
         ezpe = parse(Float64, split(readlines(file_name)[findlast(x -> occursin("Sum of electronic and zero-point Energies", x), readlines(file_name))])[7])
-    #println(ezpe)
+        #println(ezpe)
     catch
-    
+
     end
 
 
-    lf = 000000 
+    lf = 000000
     try
         lf = parse(Float64, split(readlines(file_name)[findfirst(x -> occursin("Frequencies", x), readlines(file_name))])[3])
-    #println(lf)
+        #println(lf)
     catch
-    
+
     end
 
     phaseCorr = 0
     scrf = "no"
     try
-    scrf = readlines(file_name)[findfirst(x -> occursin("scrf", x), readlines(file_name))]
-    #println(scrf)
+        scrf = readlines(file_name)[findfirst(x -> occursin("scrf", x), readlines(file_name))]
+        #println(scrf)
     catch
         println("Gas phase")
-    end   
+    end
     if scrf == "no"
         GibbsFreeHartree = etg
         phaseCorr = "NO"
@@ -82,28 +82,28 @@ function extract(file_name)
         phaseCorr = "YES"
 
     end
-    
+
     etgev = GibbsFreeHartree * 27.211396641308
     etgkj = GibbsFreeHartree * 2625.5002
 
-    
+
     # check status of output
     n = "unknow"
     try
         n = split(readlines(file_name)[findlast(x -> occursin("Normal", x) || occursin("Error", x), readlines(file_name))])[1]
-    catch 
-    
-    end 
+    catch
+
+    end
     if n == "Normal"
         status = "Done"
     elseif n == "Error"
-        status ="Error"
+        status = "Error"
     else
-        status = "Undone" 
+        status = "Undone"
     end
 
 
-    
+
     append!(fileNameVec, [file_name, etgkj, lf, GibbsFreeHartree, etg, etgev, scf, zpe, status, phaseCorr])
     return fileNameVec
 end
@@ -119,14 +119,14 @@ function extractE()
     files = filter(x -> occursin(".log", x), readdir())
     for file_name in files
         fileData = extract(file_name)
-        push!(extractedData, fileData) 
-        sort!(extractedData, by = x -> x[2])
+        push!(extractedData, fileData)
+        sort!(extractedData, by=x -> x[2])
     end
     return extractedData
 end
 
 
-   
+
 prinheader()
 extractE()
 
