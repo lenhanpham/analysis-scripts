@@ -88,7 +88,7 @@ function extract(file_name)
     catch
 
     end
-    if n == "Normal" && m == "unknown"
+    if n == "Normal" 
         status = "Done"
     elseif n == "Error" && m == "termination"
         status = "Error"
@@ -127,7 +127,4 @@ for row in extractedData
     formatted_row = [lpad(row[1], 35), lpad(string(@sprintf("%.2f", row[2])), 15), lpad(string(@sprintf("%.2f", row[3])), 10), lpad(string(@sprintf("%.5f", row[4])), 15), lpad(string(@sprintf("%.5f", row[5])), 15), lpad(string(@sprintf("%.5f", row[6])), 15), lpad(string(@sprintf("%.2f", row[7])), 10), lpad(string(@sprintf("%.2f", row[8])), 6), lpad(row[9], 8), lpad(row[10], 6)]
     println(join(formatted_row, " "))
 
-
-    #println("$(lpad(string(row[1]), 35)) $(lpad(row[2], 25)) $(lpad(row[3], 10)) $(lpad(string(row[4]), 22)) $(lpad(string(row[5]), 15)) $(lpad(string(row[6]), 25)) $(lpad(string(row[7]), 18)) $(lpad(string(row[8]), 10)) $(lpad(row[9], 8)) $(lpad(row[10], 6))")
 end
-
