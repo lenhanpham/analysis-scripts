@@ -6,7 +6,7 @@ exec julia -O3 "$0" -- $@
 
 ### This script was written by Le Nhan Pham, Flinders University (Jan 2023). https://lenhanpham.github.io/
 ### To use this script, just copy this script file and past it in the dir where all gaussian outputs are. Load julia module and type "./julia-Xtract-gaussian-energy.jl"
-### or if you can, just copy it to your bin and set chmod chmod 750 julia-Xtract-gaussian-energy.jl. After that just cd to Gaussian output dir, and type "julia-Xtract-gaussian-energy.jl"
+### or if you can, just copy it to your bin and set chmod 750 julia-Xtract-gaussian-energy.jl. After that just cd to Gaussian output dir, and type "julia-Xtract-gaussian-energy.jl"
 
 
 using Statistics
