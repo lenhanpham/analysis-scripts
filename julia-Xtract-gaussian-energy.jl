@@ -114,8 +114,8 @@ function extractE()
     for file_name in files
         fileData = extract(file_name)
         push!(extractedData, fileData)
-        sort!(extractedData, by=x -> x[2])
     end
+    sort!(extractedData, by=x -> x[2])
     return extractedData
 end
 
