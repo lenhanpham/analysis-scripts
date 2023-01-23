@@ -4,11 +4,6 @@ module load julia
 exec julia -O3 "$0" -- $@
 =#
 
-### This script was written by Le Nhan Pham, Flinders University (Jan 2023). https://lenhanpham.github.io/
-### To use this script, just copy this script file and past it in the dir where all gaussian outputs are. Load julia module and type "./julia-Xtract-gaussian-energy.jl"
-### or if you can, just copy it to your bin and set chmod 750 julia-Xtract-gaussian-energy.jl. After that just cd to Gaussian output dir, and type "julia-Xtract-gaussian-energy.jl"
-
-
 using Statistics
 using CSV
 using NamedArrays
@@ -87,15 +82,16 @@ function extract(file_name)
     # check status of output
     n = "unknown"
     m = "unknown"
+    substring = "Error termination"
     try
         n = split(file_lines[findlast(x -> occursin("Normal", x) || occursin("Error", x), file_lines)])[1]
-        m = split(file_lines[findlast(x -> occursin("termination", x), file_lines)])[2]
+        m = file_lines[findlast(x -> occursin("$substring", x), file_lines)]
     catch
 
     end
     if n == "Normal" 
         status = "Done"
-    elseif n == "Error" && m == "termination"
+    elseif n == "Error" && m != "unknown"
         status = "Error"
     else
         status = "undone"
