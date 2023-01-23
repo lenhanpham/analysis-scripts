@@ -4,6 +4,9 @@ module load julia
 exec julia -O3 "$0" -- $@
 =#
 
+### This script was written by Le Nhan Pham, Flinders University (Jan 2023). https://lenhanpham.github.io/
+
+
 using Statistics
 using CSV
 using NamedArrays
