@@ -5,12 +5,8 @@ exec julia -O3 "$0" -- $@
 =#
 
 
-
-
 using Printf
 
-
-#@time begin
 
 extractedData = Vector{Vector{Any}}()
 
@@ -132,4 +128,3 @@ for row in extractedData
 
 end
 
-#end 
