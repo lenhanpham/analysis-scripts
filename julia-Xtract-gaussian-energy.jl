@@ -4,10 +4,13 @@ module load julia
 exec julia -O3 "$0" -- $@
 =#
 
-using Statistics
-using CSV
-using NamedArrays
+
+
+
 using Printf
+
+
+#@time begin
 
 extractedData = Vector{Vector{Any}}()
 
@@ -103,19 +106,19 @@ function extract(file_name)
 end
 
 function printheader()
-    println("                   Output name          ETG kJ/mol       Low FC      ETG a.u     ETG noCorr a.u     ETG eV           SCFE      ZPE    Status   PCorr")
-    println("                   -----------          ----------       ------      -------         ------          ------          ----      ----   ------   ----")
+    println("                       Output name      ETG kJ/mol       Low FC      ETG a.u     ETG noCorr a.u     ETG eV           SCFE      ZPE    Status   PCorr")
+    println("                       -----------      ----------       ------      -------         ------          ------          ----      ----   ------   ----")
 end
 
 
 
 function extractE()
     files = filter(x -> occursin(".log", x), readdir())
-    for file_name in files
+    Threads.@threads for file_name in files
         fileData = extract(file_name)
-        push!(extractedData, fileData)
+        push!(extractedData, fileData)     
     end
-    sort!(extractedData, by=x -> x[2])
+    sort!(extractedData, by=x -> x[2]) 
     return extractedData
 end
 
@@ -129,3 +132,4 @@ for row in extractedData
 
 end
 
+#end 
