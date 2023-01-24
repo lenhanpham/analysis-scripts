@@ -22,7 +22,6 @@ function extract(file_name)
     try
         scf = parse(Float64, split(file_lines[findlast(x -> occursin("SCF Done", x), file_lines)])[5])
     catch
-
     end
 
     # find last Zero-point correction line
@@ -30,7 +29,6 @@ function extract(file_name)
     try
         zpe = parse(Float64, split(file_lines[findlast(x -> occursin("Zero-point correction", x), file_lines)])[3])
     catch
-
     end
 
     # find last Thermal correction to Gibbs Free Energy line
@@ -38,7 +36,6 @@ function extract(file_name)
     try
         tcg = parse(Float64, split(file_lines[findlast(x -> occursin("Thermal correction to Gibbs Free Energy", x), file_lines)])[7])
     catch
-
     end
 
     # find last Sum of electronic and thermal Free Energies line
@@ -46,7 +43,6 @@ function extract(file_name)
     try
         etg = parse(Float64, split(file_lines[findlast(x -> occursin("Sum of electronic and thermal Free Energies", x), file_lines)])[8])
     catch
-
     end
 
     # find last Sum of electronic and zero-point Energies line
@@ -54,7 +50,6 @@ function extract(file_name)
     try
         ezpe = parse(Float64, split(file_lines[findlast(x -> occursin("Sum of electronic and zero-point Energies", x), file_lines)])[7])
     catch
-
     end
 
     # find first Frequencies line
@@ -62,7 +57,6 @@ function extract(file_name)
     try
         lf = parse(Float64, split(file_lines[findfirst(x -> occursin("Frequencies", x), file_lines)])[3])
     catch
-
     end
 
     phaseCorr = "NO"
@@ -86,7 +80,6 @@ function extract(file_name)
         n = split(file_lines[findlast(x -> occursin("Normal", x) || occursin("Error", x), file_lines)])[1]
         m = file_lines[findlast(x -> occursin("$substring", x), file_lines)]
     catch
-
     end
     if n == "Normal" 
         status = "Done"
@@ -95,7 +88,6 @@ function extract(file_name)
     else
         status = "undone"
     end
-
 
     fileNameVec = [file_name, etgkj, lf, GibbsFreeHartree, etg, etgev, scf, zpe, status, phaseCorr]
     return fileNameVec
@@ -106,20 +98,19 @@ function printheader()
     println("                       -----------      ----------       ------      -------         ------          ------          ----      ----   ------   ----")
 end
 
-
-
 function extractE()
     files = filter(x -> occursin(".log", x), readdir())
     Threads.@threads for file_name in files
         fileData = extract(file_name)
         push!(extractedData, fileData)     
     end
-    sort!(extractedData, by=x -> x[2]) 
     return extractedData
 end
 
 printheader()
 extractE()
+
+sort!(extractedData, by=x -> x[2]) 
 
 Threads.@threads for row in extractedData
     #print out deserved information
