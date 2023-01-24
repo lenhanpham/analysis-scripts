@@ -121,7 +121,7 @@ end
 printheader()
 extractE()
 
-for row in extractedData
+Threads.@threads for row in extractedData
     #print out deserved information
     formatted_row = [lpad(row[1], 35), lpad(string(@sprintf("%.2f", row[2])), 15), lpad(string(@sprintf("%.2f", row[3])), 10), lpad(string(@sprintf("%.5f", row[4])), 15), lpad(string(@sprintf("%.5f", row[5])), 15), lpad(string(@sprintf("%.5f", row[6])), 15), lpad(string(@sprintf("%.5f", row[7])), 13  ), lpad(string(@sprintf("%.2f", row[8])), 6), lpad(row[9], 8), lpad(row[10], 6)]
     println(join(formatted_row, " "))
