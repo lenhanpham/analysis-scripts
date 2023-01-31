@@ -1,0 +1,99 @@
+#### Plot orbitals with Pymol 
+
+#### Load script to use show_dens, and cd to the dir where cube files are located; load cube file; show density, and load molecular structures
+
+run D:\Softwares\Chem\PyMOL\dens_plot.py
+
+cd E:\Projects\Martin-reaction\SET\Ir-complex\TDDFT\Def2TZVPD
+
+delete all
+set_color newcyan= [0, 215, 222] 
+set_color darkcyan= [4, 136, 140]  
+
+molecule = "Ir-complex-singlet-trans"
+
+delete all
+show_dens 178-NTO-T1.cube, -0.025 0.025, newcyan orange 
+set transparency, 0.15 
+
+cmd.load(molecule +'.mol')
+color grey, (name C*)
+color darkcyan, (name F*)
+
+hide lines
+show sticks
+show spheres
+set stick_radius, 0.1, (all)
+set sphere_scale, 0.25, (all)
+
+set ray_shadows,off
+set ray_trace_mode, 0
+set orthoscopic, on
+set depth_cue, 0
+
+####
+delete all
+show_dens 179-NTO-T1.cube, -0.025 0.025, newcyan orange 
+set transparency, 0.15 
+
+cmd.load(molecule +'.mol')
+color grey, (name C*)
+color darkcyan, (name F*)
+
+hide lines
+show sticks
+show spheres
+set stick_radius, 0.1, (all)
+set sphere_scale, 0.25, (all)
+
+set ray_shadows,off
+set ray_trace_mode, 0
+set orthoscopic, on
+set depth_cue, 0
+
+
+ray
+
+delete all
+
+
+
+#SOme preset in pymol
+
+preset.default(selection='all')
+preset.publication(selection='all')
+preset.simple(selection='all')
+preset.simple_no_solv(selection='all')
+preset.ligands(selection='all')
+preset.ball_and_stick(selection='all')
+preset.b_factor_putty(selection='all')
+preset.ligand_cartoon(selection='all')
+preset.ligand_sites(selection='all')
+preset.ligand_sites_hq(selection='all')
+preset.ligand_sites_trans(selection='all')
+preset.ligand_sites_trans_hq(selection='all')
+preset.ligand_sites_mesh(selection='all')
+preset.ligand_sites_dots(selection='all')
+preset.pretty_solv(selection='all')
+preset.pretty(selection='all')
+preset.pub_solv(selection='all')
+preset.publication(selection='all')
+preset.technical(selection='all')
+
+
+### use jmol to convert log to pbd file, or use obable to convert log file to mol or mol2 to have better structures 
+
+obabel Ir-complex-singlet-trans.log -O Ir-complex-singlet-trans.mol2
+
+obabel Ir-complex-singlet-trans.log -O Ir-complex-singlet-trans.pdb 
+
+obabel Ir-complex-singlet-trans.log -O Ir-complex-singlet-trans.xyz
+
+obabel Ir-complex-singlet-trans.log -O Ir-complex-singlet-trans.mol 
+
+
+
+#jmol
+write "E:/Projects/Martin-reaction/SET/Ir-complex/TDDFT/Def2TZVPD/Ir-complex.pdb"
+
+write "E:/Projects/Martin-reaction/SET/Ir-complex/TDDFT/Def2TZVPD/Ir-complex.mol"
