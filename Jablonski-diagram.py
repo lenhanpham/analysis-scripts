@@ -13,7 +13,7 @@ from brokenaxes import brokenaxes
 
 def extractData2files(tdFile,):
     """
-    This function is used when TDDFT runs for singlet and triplet are run separately
+    This function is used when TDDFT runs for singlet and triplet separately
     """
     ss = 'Excitation energies and oscillator strengths'
     with open(tdFile, 'r') as f:
