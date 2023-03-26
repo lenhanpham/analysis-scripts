@@ -1,6 +1,6 @@
 #!/bin/sh
 #=
-module load julia 
+module load Julia/1.6.1-linux-x86_64 
 exec julia -O3 "$0" -- $@
 =#
 
@@ -103,10 +103,16 @@ using Printf
 
     function extractE()
         files = filter(x -> occursin(".log", x), readdir())
+        extractedDataLock = ReentrantLock() 
         Threads.@threads for file_name in files
             fileData = extract(file_name)
-            push!(extractedData, fileData)
-        end
+            lock(extractedDataLock)
+            try 
+                push!(extractedData, fileData)
+            finally
+                unlock(extractedDataLock)
+            end
+        end 
         return extractedData
     end
 
@@ -122,3 +128,4 @@ using Printf
     end
 
 end
+
