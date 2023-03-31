@@ -1,0 +1,5 @@
+for i in `ls *.log`; do
+	echo "$i"
+	python Extract-scanning-geometry-Gaussian.py $i
+done
+
