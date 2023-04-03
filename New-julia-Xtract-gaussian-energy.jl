@@ -20,6 +20,7 @@ using Printf
 
         # find last SCF Done line
         scf_index = findlast(x -> occursin("SCF Done", x), file_lines)
+        nuclear_index = findlast(x -> occursin("nuclear repulsion energy", x), file_lines)
         zpe_index = findlast(x -> occursin("Zero-point correction", x), file_lines)
         tcg_index = findlast(x -> occursin("Thermal correction to Gibbs Free Energy", x), file_lines)
         etg_index = findlast(x -> occursin("Sum of electronic and thermal Free Energies", x), file_lines)
@@ -31,6 +32,12 @@ using Printf
 
         if !isnothing(scf_index)
             scf = parse(Float64, split(file_lines[scf_index])[5])
+        else
+            scf = 0
+        end
+
+        if !isnothing(nuclear_index)
+            nucleare = parse(Float64, split(file_lines[nuclear_index])[4])
         else
             scf = 0
         end
@@ -90,14 +97,14 @@ using Printf
         else
             status = "undone"
         end
-        fileNameVec = [file_name, etgkj, lf, GibbsFreeHartree, etg, etgev, scf, zpe, status, phaseCorr]
+        fileNameVec = [file_name, etgkj, lf, GibbsFreeHartree, etg, nucleare, scf, zpe, status, phaseCorr]
         return fileNameVec
     end
 
 
 
     function printheader()
-        println("                       Output name      ETG kJ/mol       Low FC      ETG a.u     ETG noCorr a.u     ETG eV           SCFE      ZPE    Status   PCorr")
+        println("                       Output name      ETG kJ/mol       Low FC      ETG a.u     ETG noCorr a.u   Nuclear E a.u      SCFE      ZPE    Status   PCorr")
         println("                       -----------      ----------       ------      -------         ------          ------          ----      ----   ------   ----")
     end
 
