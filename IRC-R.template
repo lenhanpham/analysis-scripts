@@ -1,0 +1,4 @@
+%OldChk=tschk.chk 
+%chk=tsR.chk 
+# irc=(Reverse,RCFC,maxp=25,recalc=10,maxcycle=350,stepsize=8,loose,LQA) uwb97xd/6-31G(d) scrf=(smd,solvent=1,4-Dioxane) Guess=Read Geom=AllCheck  
+

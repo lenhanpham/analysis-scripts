@@ -1,0 +1,9 @@
+for chkfile in `ls *.chk`; do
+	cp IRC-F.template ${chkfile%.chk}-F.gau 
+	sed -i -e "s/tschk.chk/$chkfile/g" ${chkfile%.chk}-F.gau  
+	sed -i -e "s/tsF/${chkfile%.chk}F/g" ${chkfile%.chk}-F.gau  
+	cp IRC-R.template ${chkfile%.chk}-R.gau 
+	sed -i -e "s/tschk.chk/$chkfile/g" ${chkfile%.chk}-R.gau 
+	sed -i -e "s/tsR/${chkfile%.chk}R/g" ${chkfile%.chk}-R.gau 
+done
+
