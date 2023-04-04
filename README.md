@@ -3,4 +3,4 @@ Several scripts used to analyze outputs of quantum chemical calculations or gene
 
 I still do not have time to write manual of how to use them. If you need to use something, just leave comments in the issue space. I'll explain.
 
-For the julia gaussian extraction script (julia-Xtract-gaussian-energy.jl), if you want to use it in parallel to improve the performance when you have large amounts of outputs, copy the Julia-multithread-Xtract-gaussian-energy.sh and julia-Xtract-gaussian-energy.jl to your bin, and chmod 750 for all before using them by typing Julia-multithread-Xtract-gaussian-energy.sh in the dir where your Gaussian log files located.
+For the julia gaussian extraction script (New-julia-Xtract-gaussian-energy.jl), if you want to use it in parallel to improve the performance when you have large amounts of outputs, copy the Julia-multithread-Xtract-gaussian-energy.sh and New-julia-Xtract-gaussian-energy.jl to your bin, and chmod 750 for all before using them by typing Julia-multithread-Xtract-gaussian-energy.sh in the dir where your Gaussian log files located.
