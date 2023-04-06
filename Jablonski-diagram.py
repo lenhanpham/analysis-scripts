@@ -40,9 +40,9 @@ def extractData2files(tdFile,):
             return Tstates, Tenergies
 
 
-output="Ir-complex-Jablonski-diagram"
-singletLog ='Ir-complex-singlet-trans-tddft-singlet'
-tripletLog ='Ir-complex-singlet-trans-tddft-triplets'            
+output="EDA-Jablonski-diagram"
+singletLog ='EDA-singlet'
+tripletLog ='EDA-triplets'            
 
 singletStates, singletEnergies = extractData2files(singletLog+".log")
 tripletStates, tripletEnergies = extractData2files(tripletLog+".log") 
@@ -59,7 +59,7 @@ fig = plt.figure(figsize=(8,8))
 
 
 n = 10
-baxes = brokenaxes(ylims=((-0.05,0.1),(min(tripletEnergies[0:n])+0.05,max(singletEnergies[0:n])+0.05)), hspace=0.05)
+baxes = brokenaxes(ylims=((-0.05,0.1),(min(singletEnergies[0:n] + tripletEnergies[0:n])-0.1,max(singletEnergies[0:n] + tripletEnergies[0:n])+0.01)), hspace=0.05)
 #baxes.scatter(singletStates[0:n], singletEnergies[0:n])
 #baxes.scatter(tripletStates[0:n], tripletEnergies[0:n], )
 baxes.set_ylabel("Energy / eV")
