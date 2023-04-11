@@ -5,19 +5,21 @@ def getrawdata(infile):
         f=open(infile,'r')
         opt=0
         geo=0
-        struct=[]
-        structure=[]
+        struct1=[]
+        struct2=[]
+        structure1=[]    # to store Standard orientation coordinates
+        structure2=[]    # to store Input orientation coordinates 
         energies=[]
         energy=[]
         for line in f:
-                
-                if opt==1 and geo==1 and not ("---" in line):
-                        structure+=[line.rstrip()]
-                
+                if opt==1 and geo==1 and not ("---" in line) :
+                        structure1+=[line.rstrip()]
+  
                 if 'Coordinates (Angstroms)' in line:
                         if opt==0:
                                 opt=1
-                                structure=[]
+                                structure2=structure1
+                                structure1=[]
                         
                 if opt==1 and "--------------------------" in line:
                         if geo==0:
@@ -31,10 +33,10 @@ def getrawdata(infile):
                         energies+=[float(energy[4])]
                         opt=0
                         geo=0
-                        struct+=[structure]
-                        structure=[]
-        
-        return struct, energies
+                        struct1+=[structure1] # to store Standard orientation coordinates
+                        struct2+=[structure2] # to store Input orientation coordinates 
+                        structure1=[]
+        return struct1, struct2, energies
 
 def periodictable(elementnumber):
         ptable={1:'H',2:'He',\
@@ -58,9 +60,9 @@ def periodictable(elementnumber):
         return element
 
 def genxyzstring(coords,elementnumber):
-        x_str='%10.5f'% coords[0]
-        y_str='%10.5f'% coords[1]
-        z_str='%10.5f'% coords[2]
+        x_str='%10.7f'% coords[0]
+        y_str='%10.7f'% coords[1]
+        z_str='%10.7f'% coords[2]
         element=periodictable(int(elementnumber))
         xyz_string=element+(3-len(element))*' '+10*' '+\
         (8-len(x_str))*' '+x_str+10*' '+(8-len(y_str))*' '+y_str+10*' '+(8-len(z_str))*' '+z_str+'\n'
@@ -92,11 +94,10 @@ def getstructures(rawdata):
                 cartesian=[]
         return 0
         
-if __name__ == "__main__":
-        infile=sys.argv[1]
-        rawdata,energies=getrawdata(infile)
-        structures=getstructures(rawdata)
-        g=open(str(infile)+'.dat','w')
-        for n in range(0,len(energies)):
-                g.write(str(n+1)+'\t'+str(energies[n])+'\n')
-        g.close()
+infile=sys.argv[1]  
+rawdata1, rawdata2, energies=getrawdata(infile)
+structures=getstructures(rawdata2)
+g=open(str(infile)+'.dat','w')
+for n in range(0,len(energies)):
+        g.write(str(n+1)+'\t'+str(energies[n])+'\n')
+g.close()
