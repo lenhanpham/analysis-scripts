@@ -1,0 +1,5 @@
+for i in `ls *.log`; do
+	echo "$i"
+	python3 Extract-scanning-geometry-Gaussian-nosym.py $i
+done
+
