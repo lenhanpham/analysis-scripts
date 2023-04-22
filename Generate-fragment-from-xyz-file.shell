@@ -1,0 +1,19 @@
+currdir=$(pwd)
+
+cd $currdir 
+
+if [ ! -d $currdir/original-xyz ]; then
+	mkdir $currdir/original-xyz 
+fi
+
+if [ -d $currdir/original-xyz ]; then
+	cp $currdir/original-xyz/*.xyz $currdir/ 	
+fi
+
+rm *-frag.xyz 
+
+for i in `ls *.xyz`; do
+	python3 fragmentation-of-xyz-for-Gaussian.py $i
+	mv $i $currdir/original-xyz 
+done
+
