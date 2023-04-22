@@ -24,10 +24,13 @@ def add_frag(lines, indices, addItems=",1"):
 lines = read_file_split_lines(xyzfile)
 totalAtoms = len(lines)
 
-frag1 = range(0, 26, 1)
-frag2 = range(26,totalAtoms,1)
+### set the number of atoms for each fragment: can be a range or a list of expected atom index
+frag1 = range(0, 26, 1)   
+frag2 = range(26,totalAtoms,1) 
 
-addFrag1 = add_frag(lines, frag1, ",1")
+
+### add fragments 
+addFrag1 = add_frag(lines, frag1, ",1")  
 addFrag2 = add_frag(addFrag1, frag2, ",2")
 
 with open(newxyz, 'w') as xyzFrag:
