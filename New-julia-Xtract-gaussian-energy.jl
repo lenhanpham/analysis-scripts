@@ -77,7 +77,7 @@ using Printf
             GibbsFreeHartree = etg
             phaseCorr = "NO"
         else
-            GibbsFreeHartree = etg + 0.003031803235
+            GibbsFreeHartree = etg + 0.003019 
             phaseCorr = "YES"
         end
 

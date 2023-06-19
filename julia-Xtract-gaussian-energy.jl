@@ -5,8 +5,11 @@ exec julia -O3 "$0" -- $@
 =#
 
 
+
 using Printf
 
+
+@time begin
 
 extractedData = Vector{Vector{Any}}()
 
@@ -22,6 +25,7 @@ function extract(file_name)
     try
         scf = parse(Float64, split(file_lines[findlast(x -> occursin("SCF Done", x), file_lines)])[5])
     catch
+
     end
 
     # find last Zero-point correction line
@@ -29,6 +33,7 @@ function extract(file_name)
     try
         zpe = parse(Float64, split(file_lines[findlast(x -> occursin("Zero-point correction", x), file_lines)])[3])
     catch
+
     end
 
     # find last Thermal correction to Gibbs Free Energy line
@@ -36,6 +41,7 @@ function extract(file_name)
     try
         tcg = parse(Float64, split(file_lines[findlast(x -> occursin("Thermal correction to Gibbs Free Energy", x), file_lines)])[7])
     catch
+
     end
 
     # find last Sum of electronic and thermal Free Energies line
@@ -43,6 +49,7 @@ function extract(file_name)
     try
         etg = parse(Float64, split(file_lines[findlast(x -> occursin("Sum of electronic and thermal Free Energies", x), file_lines)])[8])
     catch
+
     end
 
     # find last Sum of electronic and zero-point Energies line
@@ -50,6 +57,7 @@ function extract(file_name)
     try
         ezpe = parse(Float64, split(file_lines[findlast(x -> occursin("Sum of electronic and zero-point Energies", x), file_lines)])[7])
     catch
+
     end
 
     # find first Frequencies line
@@ -57,6 +65,7 @@ function extract(file_name)
     try
         lf = parse(Float64, split(file_lines[findfirst(x -> occursin("Frequencies", x), file_lines)])[3])
     catch
+
     end
 
     phaseCorr = "NO"
@@ -65,7 +74,7 @@ function extract(file_name)
         GibbsFreeHartree = etg
         phaseCorr = "NO"
     else
-        GibbsFreeHartree = etg + 0.003031803235
+        GibbsFreeHartree = etg + 0.003019
         phaseCorr = "YES"
     end
 
@@ -80,6 +89,7 @@ function extract(file_name)
         n = split(file_lines[findlast(x -> occursin("Normal", x) || occursin("Error", x), file_lines)])[1]
         m = file_lines[findlast(x -> occursin("$substring", x), file_lines)]
     catch
+
     end
     if n == "Normal" 
         status = "Done"
@@ -89,6 +99,7 @@ function extract(file_name)
         status = "undone"
     end
 
+
     fileNameVec = [file_name, etgkj, lf, GibbsFreeHartree, etg, etgev, scf, zpe, status, phaseCorr]
     return fileNameVec
 end
@@ -97,6 +108,8 @@ function printheader()
     println("                       Output name      ETG kJ/mol       Low FC      ETG a.u     ETG noCorr a.u     ETG eV           SCFE      ZPE    Status   PCorr")
     println("                       -----------      ----------       ------      -------         ------          ------          ----      ----   ------   ----")
 end
+
+
 
 function extractE()
     files = filter(x -> occursin(".log", x), readdir())
@@ -119,3 +132,4 @@ for row in extractedData
 
 end
 
+end 
