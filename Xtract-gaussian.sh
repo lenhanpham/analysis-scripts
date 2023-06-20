@@ -4,9 +4,9 @@
 ##### Deakin Uni, IFM #####
 
 
-### temperature and concentration can be used to meet experimental conditions 
+### temperature and concentration can be specified to meet the experimental conditions 
 ### Usage: Xtract-gaussian.sh -t TEMPERATURE -c CONCENTRATION  
-### if no temperature and concentration are set, 298.15 and 1M will be used.
+### if no temperature is set, 298.15 will be used.
 
 ### Gibbs free energy of Phase change correction from gas phase Po = 1 atm = 101325 N/m2 to solution 
 ### with concentration C = 1M = 1000 mol/m3, , R=8.314462618 J.K-1.mol-1
@@ -93,21 +93,21 @@ extract()
 
 	### total characters in file names
 	totalchar=$(printf "$file_name" | wc -m)
-	if [ $totalchar -gt 35 ]; then
-		startingCut=$(($totalchar-30))
+	if [ $totalchar -gt 53 ]; then
+		startingCut=$(($totalchar-52))
 		file_name=$(printf "$file_name" | cut -c $startingCut-) 	
 	fi
 
 	# print out deserved information
-	printf "%35s %18s %10s %18s %18s %18s %18s %10s %8s %6s\n" "$file_name" "$etgkj" "$lf" "$GibbsFreeHartree" "$etg" "$nucleare" "$scf" "$zpe" "$askt" "$phaseCorr"
+	printf "%53s %18s %10s %18s %18s %18s %10s %8s %6s\n" "$file_name" "$etgkj" "$lf" "$GibbsFreeHartree" "$nucleare" "$scf" "$zpe" "$askt" "$phaseCorr"
 
 	
 }
 
 prinheader(){
 # call function in all available output
-awk 'BEGIN { printf "%35s %18s %10s %18s %18s %18s %18s %10s %8s %6s\n", "Output name",  "ETG kJ/mol", "Low FC", "ETG a.u", "ETG noCorr a.u", "Nuclear E au", "SCFE", "ZPE ", "Status", "PCorr"
-             printf "%35s %18s %10s %18s %18s %18s %18s %10s %8s %6s\n", "-----------",  "----------", "------", "-------", "------", "------", "----", "----", "------",  "------" }' 
+awk 'BEGIN { printf "%53s %18s %10s %18s %18s %18s %10s %8s %6s\n", "Output name",  "ETG kJ/mol", "Low FC", "ETG a.u", "Nuclear E au", "SCFE", "ZPE ", "Status", "PCorr"
+             printf "%53s %18s %10s %18s %18s %18s %10s %8s %6s\n", "-----------",  "----------", "------", "-------", "------", "----", "----", "------",  "------" }' 
 }
 
 #for file_name  in `ls *.out`; do
