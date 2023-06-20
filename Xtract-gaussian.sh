@@ -4,26 +4,52 @@
 ##### Deakin Uni, IFM #####
 
 
-### temperature needs to be specified as the first argument of this script
-### Usage: Thermo-component-analysis-with-improved-Electronic-higher-level-of-theory.shell TEMPERATURE_value 
-### if no temperature is set, 298.15 will be used.
-temp=$1
-
-if [ -z $temp ]; then
-temp=298.15 
-fi
+### temperature and concentration can be used to meet experimental conditions 
+### Usage: Xtract-gaussian.sh -t TEMPERATURE -c CONCENTRATION  
+### if no temperature and concentration are set, 298.15 and 1M will be used.
 
 ### Gibbs free energy of Phase change correction from gas phase Po = 1 atm = 101325 N/m2 to solution 
 ### with concentration C = 1M = 1000 mol/m3, , R=8.314462618 J.K-1.mol-1
 ### Delta_G_corr=RT*ln(P/Po) = RT*ln(nRT/VPo) = RT*ln((n/V)*(RT/Po)) = RT*ln(C*RT/Po)
 R=8.314462618
-C=1000
+
+while [[ $# -gt 0 ]]
+do
+key="$1"
+case $key in
+    -t|--temp)
+    temp="$2"
+    shift # past argument
+    shift # past value
+    ;;
+    -c|--cm)
+    CM="$2"
+    shift # past argument
+    shift # past value
+    ;;
+    *)
+    shift # past argument
+    ;;
+esac
+done
+
+if [ -z $temp ]; then
+temp=298.15 
+fi
+
+if [ -z $CM ]; then 
+	CM=1
+fi
+
+C=$(echo "$CM*1000" | bc 2>/dev/null |  awk '{printf "%0.0f", $0}')
+
+
 ### 1 atm = 101325 n/m2; 1 bar = 100000 n/m2
 Po=101325 
 
 kB=0.000003166811563
 
-GphaseCorr=$(echo "scale=8; (($R*$temp*l($C*$R*$temp/$Po)*0.0003808798033989866/1000))" | bc -l 2>/dev/null |  awk '{printf "%f", $0}' | cut -c 1-16) 
+GphaseCorr=$(echo "scale=12; (($R*$temp*l($C*$R*$temp/$Po)*0.0003808798033989866/1000))" | bc -l 2>/dev/null |  awk '{printf "%f", $0}' | cut -c 1-20) 
 
 
 
@@ -100,7 +126,7 @@ fi
 
 
 printf "Temperature: $temp K. Make sure that temperature = $temp has been used in your input.\n" | tee $(basename $(pwd))-$temp.results 
-printf "Default concentration for phase correction: 1 M or 1000 mol/m3 \n" | tee -a $(basename $(pwd))-$temp.results 
+printf "The concentration for phase correction: $CM M or $C mol/m3 \n" | tee -a $(basename $(pwd))-$temp.results 
 printf "Gibbs free correction for phase changing from 1 atm to 1 M: $GphaseCorr au \n" | tee -a $(basename $(pwd))-$temp.results 
 
 prinheader | tee -a $(basename $(pwd))-$temp.results
