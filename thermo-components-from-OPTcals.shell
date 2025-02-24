@@ -1,0 +1,181 @@
+#! /bin/bash
+##
+#### This script is written by Le Nhan Pham #####
+##### Flinder Uni #####
+### This script is used to calculate Gibbs free energy, Enthanpy from high level electronic
+### theory and thermal correction to Gibbs free energy and Enthanpy from lower level fo theory
+### To use this script, High-level electronic outputs should be located in 
+### a dir in a father dir of opt + freq outputs calculated at low level of theory 
+
+### temperature needs to be specified as the first argument of this script
+### Usage: thermo-components-from-OPTcals.shell -t TEMPERATURE -c CONCENTRATION  
+### if no temperature and concentration are set, 298.15 and 1 M will be used.
+### Gibbs free energy of Phase change correction from gas phase Po = 1 atm = 101325 N/m2 to solution 
+### with concentration C = 1M = 1000 mol/m3, , R=8.314462618 J.K-1.mol-1
+### Delta_G_corr=RT*ln(P/Po) = RT*ln(nRT/VPo) = RT*ln((n/V)*(RT/Po)) = RT*ln(C*RT/Po)
+
+R=8.314462618
+
+while [[ $# -gt 0 ]]
+do
+key="$1"
+case $key in
+    -t|--temp)
+    temp="$2"
+    shift # past argument
+    shift # past value
+    ;;
+    -c|--cm)
+    CM="$2"
+    shift # past argument
+    shift # past value
+    ;;
+    *)
+    shift # past argument
+    ;;
+esac
+done
+
+if [ -z $CM ]; then 
+	CM=1
+fi
+
+C=$(echo "$CM*1000" | bc 2>/dev/null |  awk '{printf "%0.0f", $0}')
+
+
+### 1 atm = 101325 n/m2; 1 bar = 100000 n/m2
+Po=101325 
+
+kB=0.000003166811563
+ 
+
+# function for data extraction
+extract()
+{
+    scf=$(grep "SCF Done" $file_name | tail -1 | awk '{print $5}')
+	scftd=$(grep "Total Energy, E(CIS" $file_name | tail -1 | awk '{print $5}') 
+	scfEqui=$(grep "After PCM corrections, the energy is" $file_name | tail -1 | awk '{print $7}')
+	scfCLR=$(grep "Total energy after correction" $file_name | tail -1 | awk '{print $6}')
+	if [ ! -z "$scfEqui" ]; then 
+		scf=$scfEqui
+	elif [ -z "$scfEqui" ] && [ ! -z "$scfCLR" ]; then
+		scf=$scfCLR 
+	elif [ -z "$scfEqui" ] && [ -z "$scfCLR" ] && [ ! -z "$scftd" ]; then
+		scf=$scftd
+	fi 
+	zpe=$(grep "Zero-point correction" $file_name |tail -1  | awk '{print $3}')
+	ent=$(grep "Total          " $file_name| tail -1 | awk '{print $4}') 
+	tcwithZPE=$(grep "Thermal correction to Energy" $file_name | tail -1 | awk '{print $5}') 
+	tc=$(echo "scale=30; ($tcwithZPE-$zpe)" | bc 2>/dev/null |  awk '{printf "%.6f", $0}')
+	EnthalpyHartree=$(grep "Sum of electronic and thermal Enthalpies" $file_name |tail -1|awk '{print $7}')
+	GibbsFreeHartree=$(grep "Sum of electronic and thermal Free Energies" $file_name |tail -1|awk '{print $8}')
+	ts_from_output=$(echo "scale=8; ($tchlowlevel-$tcglowlevel)" | bc 2>/dev/null |  awk '{printf "%.15f", $0}')
+
+#	lf=$(grep "Low frequencies" $file_name | tail -1 |awk '{print $4}'` # | sed s/-//)
+#	lf=$(grep "Frequencies" $file_name | grep -E -- '-[0-9]+(\.[0-9]+)?' | tail -n 1  |awk '{print $3}')
+	# Use grep to find lines with 'Frequencies', then use sed to replace '--' with ' ', and awk to print negative values
+	negative_freqs=$(grep 'Frequencies' $file_name | sed 's/--/ /g' | awk '{for(i=1;i<=NF;i++) if ($i < 0) print $i}')
+	# Get the last negative frequency
+	lf=$(echo "$negative_freqs" | tail -n 1)
+	# If no negative frequencies were found, print the smallest positive frequency
+	if [ -z "$lf" ]; then
+    	positive_freqs=$(grep 'Frequencies' $file_name | sed 's/--/ /g' | awk '{for(i=2;i<=NF;i++) if ($i > 0) print $i}')
+    	lf=$(echo "$positive_freqs" | sort -n | head -n 1)
+	fi
+
+
+    temp=$(grep "Kelvin.  Pressure" $file_name | tail -n 1 | awk '{print $2}')
+    if [ -z $temp ]; then
+        temp=298.15 
+    fi  
+	ts=$(echo "scale=32; $ent*$temp/627.5096080305927/1000" | bc 2>/dev/null |  awk '{printf "%.6f", $0}')   
+    GphaseCorr=$(echo "scale=30; (($R*$temp*l($C*$R*$temp/$Po)*0.0003808798033989866/1000))" | bc -l 2>/dev/null |  awk '{printf "%.15f", $0}') 
+
+	scrf=$(grep "scrf" $file_name | head -1 | awk '{print substr($0,0,5);}') 
+	### check if $scrf value is null or not 
+	if [ -z "$scrf" ]; then  
+		GibbsFreeHartreeCorr=$GibbsFreeHartree
+		phaseCorr="NO"
+	else
+		### Phase correction term 7.96 kJ/mol = 0.003031803235 au
+		GibbsFreeHartreeCorr=$(echo "scale=8; ($GibbsFreeHartree+$GphaseCorr)" | bc 2>/dev/null |  awk '{printf "%.15f", $0}')
+		GibbsFreeHartreeCorrPrinted=$(echo "$GibbsFreeHartreeCorr" |  awk '{printf "%.6f", $0}')
+		phaseCorr="YES"
+	fi 
+
+	# check status of output
+	n=$(tail -10 $file_name|grep Normal)
+	if [ -z "$n" ]; then
+		n=$(tail -10 $file_name|grep Error)
+		en=$(tail -10 $file_name|grep "Error on")
+		if [[ ! -z $n && -z $en ]]; then
+	                askt="ERROR"
+		else
+			askt="UNDONE"
+		fi
+	else
+		askt="DONE"
+	fi
+
+	### total characters in file names
+	totalchar=$(printf "$file_name" | wc -m)
+	if [ $totalchar -gt 50 ]; then
+		startingCut=$(($totalchar-49))
+		file_name=$(printf "$file_name" | cut -c $startingCut-) 	
+	fi
+
+
+	# print out deserved information
+	printf "%50s %15s %10s %10s %10s %15s %15s %10s %11s\n" "$file_name" "$scf" "$zpe" "$tc" "$ts" "$EnthalpyHartree" "$GibbsFreeHartreeCorrPrinted" "$lf" "$phaseCorr"
+
+	
+}
+
+prinheader(){
+# call function in all available output
+awk 'BEGIN { printf "%50s %15s %10s %10s %10s %15s %15s %10s %11s\n", "Output name",  "E a.u", "ZPE a.u", "TC a.u", "TS a.u", "H a.u", "G a.u",  "LowFQ", "PhaseCorr"
+             printf "%50s %15s %10s %10s %10s %15s %15s %10s %11s\n", "-----------",  "----------", "------", "-------", "------", "------", "------", "------", "------" }' 
+}
+
+
+#for file_name  in `ls *.out`; do
+#	extract
+#done
+#echo " "
+extractE(){
+for file_name  in `ls *log`; do
+        extract
+done
+}
+
+if [ -f "$(basename $(pwd))-therm-corrected-with-highElevel-from-OPT.results" ]; then 
+	rm $(basename $(pwd))-therm-corrected-with-highElevel-from-OPT.results  
+fi  
+
+lastFile=$(ls *.log | tail -1)
+lastTemp=$(grep "Kelvin.  Pressure" $lastFile | tail -n 1 | awk '{print $2}')
+lastGphaseCorr=$(echo "scale=30; (($R*$lastTemp*l($C*$R*$lastTemp/$Po)*0.0003808798033989866/1000))" | bc -l 2>/dev/null |  awk '{printf "%.6f", $0}')  
+
+printf "Temperature in $lastFile: $lastTemp K. Make sure that temperature = $lastTemp has been used in your input. \n" | tee $(basename $(pwd))-therm-corrected-with-highElevel-from-OPT.results 
+printf "The concentration for phase correction: $CM M or $C mol/m3 \n" | tee -a $(basename $(pwd))-therm-corrected-with-highElevel-from-OPT.results 
+printf "Gibbs free correction for phase changing from 1 atm to 1 M: $lastGphaseCorr au \n" | tee -a $(basename $(pwd))-therm-corrected-with-highElevel-from-OPT.results 
+
+prinheader | tee -a $(basename $(pwd))-therm-corrected-with-highElevel-from-OPT.results 
+
+
+extractE | sort -n -k7 2>&1 | tee -a $(basename $(pwd))-therm-corrected-with-highElevel-from-OPT.results  
+
+exit 0
+
+
+
+
+
+
+
+
+
+
+
+
+
