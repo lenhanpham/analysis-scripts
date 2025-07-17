@@ -63,7 +63,7 @@ extract()
 	tcg=$(grep "Thermal correction to Gibbs Free Energy" $file_name |tail -1|awk '{print $7}')
 	etg=$(grep "Sum of electronic and thermal Free Energies" $file_name | tail -1|awk '{print $8}')
 	ezpe=$(grep "Sum of electronic and zero-point Energies" $file_name | tail -1|awk '{print $7}')
-	countround=$(grep "Copyright (c) 1988-2019, Gaussian, Inc.  All Rights Reserved" $file_name | wc -l)
+	countround=$(grep "Copyright" $file_name | wc -l)
 	# Use grep to find lines with 'Frequencies', then use sed to replace '--' with ' ', and awk to print negative values
 	negative_freqs=$(grep 'Frequencies' $file_name | sed 's/--/ /g' | awk '{for(i=1;i<=NF;i++) if ($i < 0) print $i}')
 	# Get the last negative frequency
